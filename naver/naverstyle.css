@@ -1,0 +1,65 @@
+body {
+    font-size: 50px;
+    color: #333;
+    margin: 0;
+}
+
+#content {
+    margin: 20px;
+    padding: 10px;
+    background: black;
+
+    width: 300px;
+    height: 300px;
+
+}
+
+#rank-list a {
+    /*글자 색 및 글자 스타일??*/
+    color: #FFF;
+    text-decoration: none;
+}
+
+/*#rank-list a:hover {
+    글자위에 올려놓으면 밑줄 생기는 거
+    text-decoration: underline;
+}*/
+
+#rank-list {
+    /* width height 값이 줄어들면 글씨가 잘려 보임*/
+    overflow: hidden;
+    width: 500px;
+    height: 500px;
+    margin: 0;
+}
+
+#rank-list dt {
+    display: none;
+}
+
+#rank-list dd {
+    /*글자의 위치 조정*/
+    position: relative;
+    margin: 0;
+
+    margin-top: 110px;
+    margin-left: 10px;
+        /*margin-left: 30%;*/
+
+
+}
+
+#rank-list ol {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+#rank-list li {
+    /* 글자간의 간격 및 올라가는 px 조정         및     글자의 시작위치 조정(line-height)*/
+    height: 370px;
+    line-height: 50px;
+}

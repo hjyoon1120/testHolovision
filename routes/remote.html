@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+    <title>Socket.IO chat</title>
+
+</head>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font: 13px Helvetica, Arial;
+    }
+
+    .loginDiv {
+        z-index: 1001;
+        position: absolute;
+        width: 100%;
+        height: 600px;
+        background-color: #a1a1a1;
+        text-align: center;
+
+    }
+    .secretDiv{
+        display: none;
+    }
+
+    .btn {
+
+    }
+
+    #users {
+        display:none;
+    }
+</style>
+
+<body>
+
+
+<script src="http://192.168.0.32:3000/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        var socket = io('http://192.168.0.32:3000');
+
+        $('#loginBtn').on("click", function () {
+            var uid = $("#uidInput").val();
+            var upw = $("#upwInput").val();
+
+            var data = {uid: uid, upw: upw};
+
+            socket.emit("login", data);
+
+            $(".loginDiv").hide("slow");
+
+        });
+
+        socket.on("loginResult", function (data) {
+            if (data.result == 'SUCCESS') {
+                alert(data.result);
+                $(".loginDiv").hide("slow");
+
+            } else {
+                alert("RETRY");
+            }
+
+        });
+
+        socket.on("newUser", function (data) {
+//            alert(data+"님이 접속했음");
+//            $("#users").append("<li>'" + data + "' Success to Connected</li>");
+//
+            $(".secretDiv").append("<input type='text' name='from' id='fromInput' value='" + data + "'>");
+            $(".secretDiv").append("<input type='text' name='to' id='toInput' value='" + data + "'>");
+        });
+
+        $('#btn1').on("click", function () {
+            var data = {
+                from: $("#fromInput").val(),
+                to: $("#toInput").val(),
+                text: $('#btn1').val()
+            };
+            socket.emit('uri', data);
+            return false;
+        });
+
+        $('#btn2').on("click", function () {
+            var data = {
+                from: $("#fromInput").val(),
+                to: $("#toInput").val(),
+                text: $('#btn2').val()
+            };
+            socket.emit('uri', data);
+            return false;
+        });
+
+    });
+
+</script>
+
+<div class="loginDiv">
+    <h1 style="margin-bottom:5px">Login Please</h1>
+    <input type="text" name="uid" id="uidInput" style="width: 304px; height: 54px; font-size: 20pt; margin-bottom: 5px;" placeholder="Input Your ID">
+    <br>
+    <input type="text" name="upw" id="upwInput" style="width: 304px; height: 54px; font-size: 20pt; margin-bottom: 5px;" placeholder="Input Your Password">
+    <br>
+    <button id="loginBtn" style="width: 304px; height: 54px;">LOGIN</button>
+</div>
+
+<div class="secretDiv">
+    <input type="text" name="text" id="textInput">
+</div>
+
+<ul id="users"></ul>
+
+<button class=btn id=btn1 type=submit value="../clock/clock.html">Go to digital clock</button><br>
+<button class=btn id=btn2 type=submit value="../watch/canvasEx2.html">Go to analogue clock</button><br>
+
+<!--<button class=btn, id=btn3 type=submit value="/weather/weather1.html">Go to weather</button><br>
+<button class=btn, id=btn4 type=submit value="/naver/naver.html">Go to top5</button><br>
+<button class=btn, id=btn5 type=submit value="/news/sendnews.html">Go to news</button><br>-->
+
+</body>
+</html>

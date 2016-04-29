@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+<head>
+    <title>Socket.IO chat</title>
+</head>
+
+<style>
+
+</style>
+
+<body>
+
+<script src="http://14.32.66.127:3003/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        var socket = io('http://14.32.66.127:3003');
+        var i = 0;
+
+        /*var $form = $("form");
+        var $input = $form.find("input");*/
+
+       /* $form.on("submit", function () {
+
+            socket.emit("msg", $input.val());
+            $input.val("");
+            return false;
+        });*/
+
+        socket.on("smsg", function (data) {
+//            alert(data);
+            $('#messages').append($('<li>').text(data));
+        });
+
+
+        $('#loginBtn').on("click", function () {
+            var uid = $("#uidInput").val();
+            var upw = $("#upwInput").val();
+
+            var data = {uid: uid, upw: upw};
+
+            socket.emit("login", data);
+
+            $(".login-box").hide("slow");
+
+        });
+
+        socket.on("loginResult", function (data) {
+            if (data.result == 'SUCCESS') {
+                alert(data.result);
+                $(".loginDiv").hide("slow");
+
+            } else {
+                alert("RETRY");
+            }
+
+        });
+
+        socket.on("secretBox", function (data) {
+//            alert(data.from +": "+data.text);
+            $("#messages").append("<li value="+i+" class='contents' >[" + data.from + "] : '"  +data.text + "'</li>");
+            i++;
+        });
+        /*$("#secretBtn").click(function () {
+            var data = {
+                from: $("#uidInput").val(),
+                to: $("#toInput").val(),
+                text: $("#textInput").val()
+            };
+            socket.emit("secretMsg", data);
+
+        });
+*/
+        socket.on("newUser", function (data) {
+//            alert(data+"님이 접속했음");
+            $("#users").append("<li>'" + data + "'</li>");
+//
+            /*     $(".secretDiv").append("<input type='text' name='from' id='fromInput' value='" + data + "'>");
+             $(".secretDiv").append("<input type='text' name='to' id='toInput' value='" + data + "'>");*/
+        });
+
+        /*$('#btn1').on("click", function () {
+         var data = {
+         from: $("#fromInput").val(),
+         to: $("#toInput").val(),
+         text: $('#btn1').val()
+         };
+         socket.emit('uri', data);
+         return false;
+         });
+
+         $('#btn2').on("click", function () {
+         var data = {
+         from: $("#fromInput").val(),
+         to: $("#toInput").val(),
+         text: $('#btn2').val()
+         };
+         socket.emit('uri', data);
+         return false;
+         });
+
+         $('#btn4').on("click", function () {
+         var data = {
+         from: $("#fromInput").val(),
+         to: $("#toInput").val(),
+         text: $('#btn4').val()
+         };
+         socket.emit('uri', data);
+         return false;
+         });
+
+         $('#btn3').on("click", function () {
+         var data = {
+         from: $("#fromInput").val(),
+         to: $("#toInput").val(),
+         text: $('#btn3').val()
+         };
+         socket.emit('uri', data);
+         return false;
+         });
+
+         $('#btn5').on("click", function () {
+         var data = {
+         from: $("#fromInput").val(),
+         to: $("#toInput").val(),
+         text: $('#btn5').val()
+         };
+         socket.emit('uri', data);
+         return false;
+         });*/
+
+    });
+
+</script>
+<div id="header">
+    Welcome to HoloVision
+
+</div>
+<div style="z-index: 9999" class="login-box">
+    <div class="login-logo">
+        <!--<b>HoloVision</b>&nbsp;&nbsp;Login-->
+    </div><!-- /.login-logo -->
+    <div class="login-box-body loginDiv" style=" margin-top:100px; width: 300px;">
+        <!--<p class="login-box-msg">Sign in to start your session</p>-->
+
+        <div class="form-group has-feedback">
+            <input type="text" name="uid" id="uidInput" class="form-control" placeholder="ID">
+            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+        </div>
+        <div class="form-group has-feedback">
+            <input type="password" name="upw" id="upwInput" class="form-control" placeholder="Password">
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        </div>
+        <div class="row">
+
+            <div class="col-xs-12">
+                <button type="submit" id="loginBtn" class="btn btn-primary btn-block btn-flat">Sign In</button>
+            </div><!-- /.col -->
+        </div>
+
+
+    </div><!-- /.login-box-body -->
+</div><!-- /.login-box -->
+
+
+<!--<div class="loginDiv">
+    <h1 style="margin-bottom:5px">Login Please</h1>
+    <input type="text" name="uid" id="uidInput" style="width: 304px; height: 54px; font-size: 20pt; margin-bottom: 5px;"
+           placeholder="Input Your ID">
+    <br>
+    <input type="text" name="upw" id="upwInput" style="width: 304px; height: 54px; font-size: 20pt; margin-bottom: 5px;"
+           placeholder="Input Your Password">
+    <br>
+    <button id="loginBtn" style="width: 304px; height: 54px;">LOGIN</button>
+</div>-->
+<div class="wrapper">
+    <ul id="messages">
+    </ul>
+</div>
+<div class="side">
+    <ul id="users">
+        <li style="text-align:center; border-bottom: double";><b>User List</b></li>
+    </ul>
+</div>
+
+<!--<div class="secretDiv">
+    &lt;!&ndash;  from: <input type="text" name="from" id="fromInput" >&ndash;&gt;
+    <input type="text" name="to" id="toInput" placeholder="Send To:">
+    <input type="text" name="text" id="textInput" placeholder="Input the text:">
+    <button id="secretBtn"><b>SEND</b></button>
+</div>-->
+<!--
+<div class="secretDiv">
+    <input type="text" name="text" id="textInput">
+</div>
+-->
+
+<!--<div class="wrapper">
+    <div class="row1" style="margin-bottom: 15px;">
+        <button class="btn-push" id="btn1" type=submit value="/clock/clock.html"
+                style="float:left; margin-right: 10px;"><img
+                src=http://192.168.0.30:8082/chatEx2/img/clock1.png></button>
+        <button class="btn-push" id="btn2" type=submit value="/watch/canvasEx2.html" style="float:left"><img
+                src=http://192.168.0.30:8082/chatEx2/img/clock.png></button>
+    </div>
+    <div class="row1" style="margin-bottom: 15px;">
+        <button class="btn-push" id="btn5" type=submit value="/news/sendnews.html"
+                style="float: left; margin-right: 10px;"><img
+                src=http://192.168.0.30:8082/chatEx2/img/news.png></button>
+        <button class="btn-push" id="btn4" type=submit value="/naver/naver.html" style="float:left"><img
+                src=http://192.168.0.30:8082/chatEx2/img/naver.png></button>
+    </div>
+    <div class="row1" style="margin-bottom: 15px;">
+
+        <button class="btn-push" id="btn3" type=submit value="/weather/weather.html" style="float:left"><img
+                src=http://192.168.0.30:8082/chatEx2/img/weather.png></button>
+    </div>
+</div>-->
+</body>
+</html>

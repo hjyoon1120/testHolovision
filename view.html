@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Socket.IO view</title>
+
+    <link rel="stylesheet" href="http://14.32.66.127:8083/chatEx2/css/reset.css">
+    <!--<link rel='stylesheet prefetch' href="http://cssjockey.com/demos/demo.css">-->
+    <link rel="stylesheet" href="http://14.32.66.127:8083/chatEx2/css/style.css">
+    <link rel="stylesheet" href="http://14.32.66.127:8083/chatEx2/bootstrap/css/bootstrap.min.css">
+
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+
+    <!-- leapjs -->
+    <script src="//js.leapmotion.com/leap-0.6.4.js"></script>
+    <script src="//js.leapmotion.com/leap-plugins-0.1.11.js"></script>
+
+</head>
+<style>
+    body{
+        background-color: black;
+    }
+
+
+    .login-box {
+        background-color: #b0e0e6;
+        height:1600px;
+        width:100%;
+        z-index: 1001;
+        position: absolute;
+        margin:0 auto;
+
+    }
+
+    .loginDiv {
+        margin:0 auto;
+    }
+
+
+    iframe {
+        position:fixed; top:0px; left:0px; bottom:0px; right:0px;
+        width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:-1;
+    ;
+    }
+
+    .division {
+
+        max-width:500px;
+        max-height:500px;
+        width:500px;
+        height:500px;
+        border:1px solid white;
+        margin:0 auto;
+        padding:0px;
+        background-color: transparent;
+        position:relative;
+        float: left;
+        -webkit-clip-path: polygon(0 0, 100% 0, 100% 70%, 70% 100%, 30% 100%, 0 70%);
+        overflow: hidden;
+    }
+
+
+    #leftupper {
+        -webkit-transform: rotate(-45deg) scaleX(-1);
+
+    }
+
+    #rightupper {
+        -webkit-transform: rotate(45deg) scaleX(-1);}
+
+
+    #rightdown {
+        -webkit-transform: rotate(135deg) scaleX(-1);}
+
+
+    #leftdown {
+        -webkit-transform: rotate(-135deg) scaleX(-1);}
+
+    #leftupper,#leftdown {
+        margin-left:200px;
+    }
+
+    #mleftupper {
+        -webkit-transform: rotate(-45deg) scaleX(-1);
+
+    }
+
+    #mrightupper {
+        -webkit-transform: rotate(45deg) scaleX(-1);}
+
+
+    #mrightdown {
+        -webkit-transform: rotate(135deg) scaleX(-1);}
+
+
+    #mleftdown {
+        -webkit-transform: rotate(-135deg) scaleX(-1);}
+
+    #mleftupper,#mleftdown {
+        margin-left:200px;
+    }
+
+    .messages{
+        margin-top:150px;
+        font-size:60px;
+        text-align:center;
+        color:white;
+        background-color: rgba(10, 5, 35, 0.94);
+        width:auto;
+    }
+
+
+</style>
+
+<div style="z-index: 9999" class="login-box">
+    <div class="login-logo">
+        <!--<b>HoloVision</b>&nbsp;&nbsp;Login-->
+    </div><!-- /.login-logo -->
+    <div class="login-box-body loginDiv" style=" margin-top:100px; width: 300px; text-align: center">
+        <h1><b>Holo Vision</b></h1>
+
+        <div class="form-group has-feedback">
+            <input type="text" name="uid" id="uidInput" class="form-control" placeholder="ID">
+            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+        </div>
+        <div class="form-group has-feedback">
+            <input type="password" name="upw" id="upwInput" class="form-control" placeholder="Password">
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        </div>
+
+        <input type="checkbox" id="cb_saveId" style="margin-left: 210px; margin-bottom: 20px"> 자동로그인 <br>
+
+        <div class="row">
+
+            <div class="col-xs-12">
+                <button type="submit" id="loginBtn" class="btn btn-primary btn-block btn-flat">Sign In</button>
+            </div><!-- /.col -->
+        </div>
+
+
+    </div><!-- /.login-box-body -->
+</div><!-- /.login-box -->
+
+<!--
+<iframe id="viewIframe" src="" scrolling="no" style= seamless:"seamless"></iframe>
+-->
+
+<button style="background-color: black;  border:1px solid black; float: right; margin-top: 10px; margin-right: 3px;" type="submit" id="logoutBtn" >
+    <img src=http://14.32.66.127:8083/chatEx2/img/outimg.png></button>
+
+<div class="division" id="leftupper">
+
+    <iframe id="viewIframe1" src="" scrolling="no" auto-play=1
+            seamless="seamless" style="max-width: 100%; max-height:100%; width:100%; height: 100%;
+           "></iframe>
+    <ul class="messages">
+    </ul>
+
+</div>
+
+
+<div class="division" id="rightupper" >
+    <iframe id="viewIframe2" src="" scrolling="no"
+            seamless="seamless" style="max-width: 100%; max-height:100%; width:100%; height: 100%;
+           "></iframe>
+    <ul class="messages">
+    </ul>
+</div>
+
+
+<div class="division" id="leftdown" >
+    <iframe id="viewIframe3"  src="" scrolling="no"
+            seamless="seamless" style="max-width: 100%; max-height:100%; width:100%; height: 100%;
+          "></iframe>
+    <ul class="messages">
+    </ul>
+</div>
+
+
+
+<div class="division" id="rightdown" >
+    <iframe id="viewIframe4" src="" scrolling="no"
+            seamless="seamless" style="max-width: 100%; max-height:100%; width:100%; height: 100%;
+           " ></iframe>
+    <ul class="messages">
+    </ul>
+</div>
+
+<script src="plugins/jQuery/jQuery-2.1.4.min.js"></script>
+<!-- Bootstrap 3.3.5 -->
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<!-- iCheck -->
+<script src="plugins/iCheck/icheck.min.js"></script>
+<script src="http://14.32.66.127:3003/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+<!-- leapjs -->
+<script src="//js.leapmotion.com/leap-0.6.4.js"></script>
+<script src="//js.leapmotion.com/leap-plugins-0.1.11.js"></script>
+
+
+<script>
+
+
+    $(function(){
+// 쿠키값을 가져온다.
+        var cookie_uidInput = getLogin();
+        var cookie_upwInput = getLogin1();
+
+        var socket = io('http://14.32.66.127:3003');
+        var i = 0;
+        /**
+         * 쿠키값이 존재하면 id에 쿠키에서 가져온 id를 할당한 뒤
+         * 체크박스를 체크상태로 변경
+         */
+        if(cookie_uidInput != "") {
+            $("#uidInput").val(cookie_uidInput);
+            $("#upwInput").val(cookie_upwInput);
+            $("#cb_saveId").attr("checked", true);
+
+
+            var uid = $("#uidInput").val();
+            var upw = $("#upwInput").val();
+
+            var data = {uid: uid, upw: upw};
+
+            socket.emit("login", data);
+
+            $(".login-box").hide("slow");
+
+            console.log(cookie_uidInput);
+            console.log(cookie_upwInput);
+
+
+
+
+        }else{
+
+            $('#loginBtn').on("click", function () {
+                var uid = $("#uidInput").val();
+                var upw = $("#upwInput").val();
+
+                var data = {uid: uid, upw: upw};
+
+                socket.emit("login", data);
+
+
+
+            });
+
+            socket.on("loginResult", function (data) {
+                if (data.result == 'SUCCESS') {
+                    alert(data.result);
+                    $(".login-box").hide("slow");
+
+
+                } else {
+                alert("RETRY");
+                self.location.href="http://14.32.66.127:3003/view";
+            }
+
+            });
+
+        }
+
+
+        socket.on("uri", function (data) {
+            console.log("버튼누르고 받아왔을때 data는?");
+            console.log(data.text);
+            document.getElementById("viewIframe1").src = 'http://14.32.66.127:8083/chatEx2/' + data.text;
+            document.getElementById("viewIframe2").src = 'http://14.32.66.127:8083/chatEx2/' + data.text;
+            document.getElementById("viewIframe3").src = 'http://14.32.66.127:8083/chatEx2/' + data.text;
+            document.getElementById("viewIframe4").src = 'http://14.32.66.127:8083/chatEx2/' + data.text;
+
+        });
+
+        socket.on("secretBox", function (data) {
+//            alert(data.from +": "+data.text);
+            $(".messages").prepend("<li value = " + i + ">[" + data.from + "] : '"  +data.text + "'</li>");
+            console.log('boox'+data);
+            i++
+            window.setTimeout(function(){$(".messages").empty()},5000);
+        });
+
+        socket.on("reset", function (data) {
+//            alert(data.from +": "+data.text);
+            console.log("reset" + data);
+            $(".messages").empty();
+
+            i=0;
+        });
+
+
+
+
+
+        //leapmotion remote
+
+        var remote = [
+            'http://14.32.66.127:8083/chatEx2/clock/clock.html',
+            'http://14.32.66.127:8083/chatEx2/watch/canvasEx2.html',
+            'http://14.32.66.127:8083/chatEx2/news/sendnews.html',
+            'http://14.32.66.127:8083/chatEx2/naver/naver.html',
+            'http://14.32.66.127:8083/chatEx2/weather/weather.html'
+        ]
+
+        var introm = 'https://www.youtube.com/embed/ZrTkEJinX5w?autoplay=1&volume=0&vol=0&mute=1'
+        var intro ='https://www.youtube.com/embed/ZrTkEJinX5w?autoplay=1'
+
+        var j = 0;
+        var controller = Leap.loop({enableGestures: true}, function(frame){
+            if(frame.valid && frame.gestures.length > 0){
+                frame.gestures.forEach(function(gesture){
+                    if(gesture.type == "circle" && gesture.state == "stop"){
+                        gesture.type = false;
+                        document.getElementById("viewIframe1").src = remote[j];
+                        document.getElementById("viewIframe2").src = remote[j];
+                        document.getElementById("viewIframe3").src = remote[j];
+                        document.getElementById("viewIframe4").src = remote[j];
+                        console.log(j);
+                        j=j+1;
+                        if(j == 5){
+                            //show();
+                            j=0
+                        }
+                    }
+                    if(gesture.type == 'keyTap' && gesture.state == "stop"){
+                        gesture.type=false;
+
+                        document.getElementById("viewIframe1").src = intro;
+                        document.getElementById("viewIframe2").src = introm;
+                        document.getElementById("viewIframe3").src = introm;
+                        document.getElementById("viewIframe4").src = introm;
+                    }
+                });
+            }
+        })
+
+
+
+
+
+
+
+
+// 아이디 저장 체크시
+        $("#cb_saveId").on("click", function(){
+            var _this = this;
+            var isRemember;
+
+            if($(_this).is(":checked")) {
+                isRemember = confirm("이 PC에 로그인 정보를 저장하시겠습니까? PC방등의 공공장소에서는 개인정보가 유출될 수 있으니 주의해주십시오.");
+
+                if(!isRemember)
+            $(_this).attr("checked", false);
+        }
+        });
+
+// 로그인 버튼 클릭시
+        $("#loginBtn").on("click", function(){
+            if($("#cb_saveId").is(":checked")){ // 저장 체크시
+                saveLogin($("#uidInput").val());
+            }else{ // 체크 해제시는 공백
+                saveLogin("");
+            }
+        });
+
+
+        $("#loginBtn").on("click", function(){
+            if($("#cb_saveId").is(":checked")){ // 저장 체크시
+                saveLogin1($("#upwInput").val());
+            }else{ // 체크 해제시는 공백
+                saveLogin("");
+            }
+        });
+
+        $('#logoutBtn').on("click", function (uid) {
+            setSave("userid", uid, -1);
+            console.log("로그아웃");
+            cookie_uidInput = "";
+            console.log(cookie_uidInput);
+            self.location.href="http://14.32.66.127:3003/view";
+    });
+
+    });
+
+    /**
+     * saveLogin
+     * 로그인 정보 저장
+     * @param id
+     */
+    function saveLogin(uid) {
+        if(uid != "") {
+// userid 쿠키에 id 값을 7일간 저장
+            setSave("userid", uid, 7);
+        }else{
+// userid 쿠키 삭제
+            setSave("userid", uid, -1);
+        }
+    }
+
+    function saveLogin1(upw) {
+        if(upw != "") {
+// userpw 쿠키에 pw 값을 7일간 저장
+            setSave1("userpw", upw, 7);
+        }else{
+// userpw 쿠키 삭제
+            setSave1("userpw", upw, -1);
+        }
+    }
+
+
+    /**
+     * setSave
+     * Cookie에 user_id를 저장
+     * @param name
+     * @param value
+     * @param expiredays
+     */
+    function setSave(name, value, expiredays) {
+        var today = new Date();
+        today.setDate( today.getDate() + expiredays );
+        document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + today.toGMTString() + ";"
+        console.log(document.cookie);
+
+    }
+
+    function setSave1(name, value, expiredays) {
+        var today = new Date();
+        today.setDate( today.getDate() + expiredays );
+        document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + today.toGMTString() + ";"
+    }
+
+    /**
+     * getLogin
+     * 쿠키값을 가져온다.
+     * @returns {String}
+     */
+    function getLogin() {
+// userid 쿠키에서 id 값을 가져온다.
+        var cook = document.cookie + ";";
+        var idx = cook.indexOf("userid", 0);
+        var val = "";
+
+        if(idx != -1) {
+            cook = cook.substring(idx, cook.length);
+            begin = cook.indexOf("=", 0) + 1;
+            end = cook.indexOf(";", begin);
+            val = unescape(cook.substring(begin, end));
+        }
+        return val;
+    }
+
+
+    function getLogin1() {
+// userpw 쿠키에서 pw 값을 가져온다.
+        var cook = document.cookie + ";";
+        var idx = cook.indexOf("userpw", 0);
+        var val = "";
+
+        if(idx != -1) {
+            cook = cook.substring(idx, cook.length);
+            begin = cook.indexOf("=", 0) + 1;
+            end = cook.indexOf(";", begin);
+            val = unescape(cook.substring(begin, end));
+        }
+        return val;
+    }
+
+
+
+
+</script>
+
+
+</body>
+</html>

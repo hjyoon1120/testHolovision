@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .loginDiv {
+        z-index: 1001;
+        position: absolute;
+        width: 100%;
+        height: 500px;
+        background-color: #a1a1a1;
+        text-align: center;
+    }
+    iframe {
+        position:fixed; top:0px; left:0px; bottom:0px; right:0px;
+        width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:-1;
+    ;
+    }
+</style>
+<body>
+<div class="loginDiv">
+    <h1 style="margin-bottom:5px">Login Please</h1>
+    <input type="text" name="uid" id="uidInput" style="width: 304px; height: 54px; font-size: 20pt; margin-bottom: 5px;" placeholder="Input Your ID">
+    <br>
+    <input type="text" name="upw" id="upwInput" style="width: 304px; height: 54px; font-size: 20pt; margin-bottom: 5px;" placeholder="Input Your Password">
+    <br>
+    <button id="loginBtn" style="width: 304px; height: 54px;">LOGIN</button>
+</div>
+
+<iframe id="viewIframe" src="" scrolling="no" style= seamless:"seamless"></iframe>
+
+<script src="http://192.168.0.30:3000/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var socket = io('http://192.168.0.30:3000');
+
+        $('#loginBtn').on("click", function () {
+            var uid = $("#uidInput").val();
+            var upw = $("#upwInput").val();
+
+            var data = {uid: uid, upw: upw};
+
+            socket.emit("login", data);
+
+            $(".loginDiv").hide("slow");
+
+        });
+
+        socket.on("loginResult", function (data) {
+            if (data.result == 'SUCCESS') {
+                alert(data.result);
+                $(".loginDiv").hide("slow");
+
+//                setTimeout(function () {
+//
+//                    socket.imit("secretMsg", {from:"user31", to:"user33",text:"GG"})
+//
+//                },1000);
+            } else {
+                alert("RETRY");
+                self.location.href("http://192.168.0.30:3000/view")
+            }
+
+        });
+
+        socket.on("uri", function (data) {
+            console.log("버튼누르고 받아왔을때 data는?");
+            console.log(data.text);
+            document.getElementById("viewIframe").src = 'http://192.168.0.30:8082/chatEx2/' + data.text;
+
+        });
+    });
+
+
+</script>
+</body>
+</html>

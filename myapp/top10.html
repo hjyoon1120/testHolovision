@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+
+<div class="top1"></div>
+
+<!-- JavaScript Includes -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.0.0/moment.min.js"></script>
+
+<script>
+
+
+    $(document).ready(function(){
+
+        $.getJSON("http://192.168.0.30:3009/top10")
+                .done(function (data){
+                    console.dir(data);
+                    var top = document.getElementsByClassName('top1');
+                    top[0].innerHTML = data[0];
+
+                   /* var x = document.getElementsByClassName("example");
+                    x[0].innerHTML = "Hello World!";*/
+
+                    console.log(top);
+                });
+    }) ;
+</script>
+
+
+
+</body>
+</html>

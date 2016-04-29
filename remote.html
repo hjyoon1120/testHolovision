@@ -1,0 +1,462 @@
+<!doctype html>
+<html>
+<head>
+    <title>Socket.IO remote</title>
+    <script src="http://s.codepen.io/assets/libs/modernizr.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="http://14.32.66.127:8083/chatEx2/css/reset.css">
+    <!--<link rel='stylesheet prefetch' href="http://cssjockey.com/demos/demo.css">-->
+    <link rel="stylesheet" href="http://14.32.66.127:8083/chatEx2/css/style.css">
+    <link rel="stylesheet" href="http://14.32.66.127:8083/chatEx2/bootstrap/css/bootstrap.min.css">
+
+    <!-- Theme style -->
+   <!-- <link rel="stylesheet" href="http://192.168.0.32:8081/chatEx2/dist/css/AdminLTE.min.css"> 로그인 박스에 흰색 박스가 쳐짐-->
+    <!-- iCheck -->
+    <link rel="stylesheet" href="http://14.32.66.127:8083/chatEx2/plugins/iCheck/square/blue.css">
+
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+</head>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font: 13px Helvetica, Arial;
+    }
+
+/*    .loginDiv {
+        z-index: 1001;
+        position: absolute;
+!*        width: 100%;
+        height: 600px;*!
+        !*background-color: #a1a1a1;*!
+        text-align: center;
+        !*display: none;*!
+    }*/
+
+    .secretDiv {
+        display: none;
+    }
+
+    .btn-push {
+
+        background-color: white;
+        width: 300px;
+        height: 300px;
+        padding: 0;
+    }
+
+    #header {
+        width: 100%;
+        height: 50px;
+        border-bottom: 2px solid black;
+        background-color: #3c8dbc;
+        font-family: "Helvetica Neue";
+        font-weight: bold;
+        font-size: 30px;
+        text-align: center;
+        padding-top: 7px;
+        margin-bottom: 0px;
+
+    }
+
+    .row1 {
+        height: 300px;
+        width: 650px;
+        margin: 0 auto;
+
+    }
+
+    .wrapper {
+        margin: 0 auto;
+        width: 800px;
+        height: auto;
+        background-color: #ffe87c;
+        padding-top: 15px;
+        padding-bottom: 15px;
+
+    }
+
+    .login-box {
+        background-color: #b0e0e6;
+        height:1600px;
+        width:100%;
+        z-index: 1001;
+        position: absolute;
+        margin:0 auto;
+
+    }
+
+    .loginDiv {
+        margin:0 auto;
+    }
+
+
+</style>
+
+<body>
+
+<script src="http://14.32.66.127:8083/chatEx2/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+<!-- Bootstrap 3.3.5 -->
+<script src="http://14.32.66.127:8083/chatEx2/bootstrap/js/bootstrap.min.js"></script>
+<!-- iCheck -->
+<script src="http://14.32.66.127:8083/chatEx2/plugins/iCheck/icheck.min.js"></script>
+
+<script src="http://14.32.66.127:3003/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+<script>
+
+
+
+
+    $(function(){
+// 쿠키값을 가져온다.
+        var cookie_uidInput = getLogin();
+        var cookie_upwInput = getLogin1();
+
+        var socket = io('http://14.32.66.127:3003');
+
+        /**
+         * 쿠키값이 존재하면 id에 쿠키에서 가져온 id를 할당한 뒤
+         * 체크박스를 체크상태로 변경
+         */
+        if(cookie_uidInput != "") {
+            $("#uidInput").val(cookie_uidInput);
+            $("#upwInput").val(cookie_upwInput);
+            $("#cb_saveId").attr("checked", true);
+
+
+            var uid = $("#uidInput").val();
+            var upw = $("#upwInput").val();
+
+            var data = {uid: uid, upw: upw};
+
+            socket.emit("login", data);
+
+            $(".login-box").hide("slow");
+
+            console.log(cookie_uidInput);
+            console.log(cookie_upwInput);
+
+        }else{
+
+            $('#loginBtn').on("click", function () {
+                var uid = $("#uidInput").val();
+                var upw = $("#upwInput").val();
+
+                var data = {uid: uid, upw: upw};
+
+                socket.emit("login", data);
+
+                $(".login-box").hide("slow");
+
+            });
+
+            socket.on("loginResult", function (data) {
+                if (data.result == 'SUCCESS') {
+                    alert(data.result);
+
+                } else {
+                    alert("RETRY");
+                    self.location.href="http://14.32.66.127:3003";
+                }
+
+            });
+
+        }
+
+
+// 아이디 저장 체크시
+        $("#cb_saveId").on("click", function(){
+            var _this = this;
+            var isRemember;
+
+            if($(_this).is(":checked")) {
+                isRemember = confirm("이 PC에 로그인 정보를 저장하시겠습니까? PC방등의 공공장소에서는 개인정보가 유출될 수 있으니 주의해주십시오.");
+
+                if(!isRemember)
+                    $(_this).attr("checked", false);
+            }
+        });
+
+// 로그인 버튼 클릭시
+        $("#loginBtn").on("click", function(){
+            if($("#cb_saveId").is(":checked")){ // 저장 체크시
+                saveLogin($("#uidInput").val());
+            }else{ // 체크 해제시는 공백
+                saveLogin("");
+            }
+        });
+
+
+        $("#loginBtn").on("click", function(){
+            if($("#cb_saveId").is(":checked")){ // 저장 체크시
+                saveLogin1($("#upwInput").val());
+            }else{ // 체크 해제시는 공백
+                saveLogin("");
+            }
+        });
+
+        $('#logoutBtn').on("click", function (uid) {
+            setSave("userid", uid, -1);
+            console.log("로그아웃");
+            cookie_uidInput = "";
+            console.log(cookie_uidInput);
+            self.location.href="http://14.32.66.127:3003";
+        });
+
+    });
+
+    /**
+     * saveLogin
+     * 로그인 정보 저장
+     * @param id
+     */
+    function saveLogin(uid) {
+        if(uid != "") {
+// userid 쿠키에 id 값을 7일간 저장
+            setSave("userid", uid, 365);
+        }else{
+// userid 쿠키 삭제
+            setSave("userid", uid, -1);
+        }
+    }
+
+    function saveLogin1(upw) {
+        if(upw != "") {
+// userpw 쿠키에 pw 값을 7일간 저장
+            setSave1("userpw", upw, 365);
+        }else{
+// userpw 쿠키 삭제
+            setSave1("userpw", upw, -1);
+        }
+    }
+
+
+    /**
+     * setSave
+     * Cookie에 user_id를 저장
+     * @param name
+     * @param value
+     * @param expiredays
+     */
+    function setSave(name, value, expiredays) {
+        var today = new Date();
+        today.setDate( today.getDate() + expiredays );
+        document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + today.toGMTString() + ";"
+        console.log(document.cookie);
+
+    }
+
+    function setSave1(name, value, expiredays) {
+        var today = new Date();
+        today.setDate( today.getDate() + expiredays );
+        document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + today.toGMTString() + ";"
+    }
+
+    /**
+     * getLogin
+     * 쿠키값을 가져온다.
+     * @returns {String}
+     */
+    function getLogin() {
+// userid 쿠키에서 id 값을 가져온다.
+        var cook = document.cookie + ";";
+        var idx = cook.indexOf("userid", 0);
+        var val = "";
+
+        if(idx != -1) {
+            cook = cook.substring(idx, cook.length);
+            begin = cook.indexOf("=", 0) + 1;
+            end = cook.indexOf(";", begin);
+            val = unescape(cook.substring(begin, end));
+        }
+        return val;
+    }
+
+
+    function getLogin1() {
+// userpw 쿠키에서 pw 값을 가져온다.
+        var cook = document.cookie + ";";
+        var idx = cook.indexOf("userpw", 0);
+        var val = "";
+
+        if(idx != -1) {
+            cook = cook.substring(idx, cook.length);
+            begin = cook.indexOf("=", 0) + 1;
+            end = cook.indexOf(";", begin);
+            val = unescape(cook.substring(begin, end));
+        }
+        return val;
+    }
+
+
+
+
+
+
+
+
+
+    $(document).ready(function () {
+
+        var socket = io('http://14.32.66.127:3003');
+
+        socket.on("newUser", function (data) {
+//            alert(data+"님이 접속했음");
+//            $("#users").append("<li>'" + data + "' Success to Connected</li>");
+//
+            $(".secretDiv").append("<input type='text' name='from' id='fromInput' value='" + data + "'>");
+            $(".secretDiv").append("<input type='text' name='to' id='toInput' value='" + data + "'>");
+        });
+
+        $('#btn1').on("click", function () {
+            var data = {
+                from: $("#fromInput").val(),
+                to: $("#toInput").val(),
+                text: $('#btn1').val(),
+
+            };
+            socket.emit('uri', data);
+            return false;
+        });
+
+        $('#btn2').on("click", function () {
+            var data = {
+                from: $("#fromInput").val(),
+                to: $("#toInput").val(),
+                text: $('#btn2').val()
+            };
+            socket.emit('uri', data);
+            return false;
+        });
+
+        $('#btn4').on("click", function () {
+            var data = {
+                from: $("#fromInput").val(),
+                to: $("#toInput").val(),
+                text: $('#btn4').val()
+            };
+            socket.emit('uri', data);
+            return false;
+        });
+
+        $('#btn3').on("click", function () {
+            var data = {
+                from: $("#fromInput").val(),
+                to: $("#toInput").val(),
+                text: $('#btn3').val()
+            };
+            socket.emit('uri', data);
+            return false;
+        });
+
+        $('#btn5').on("click", function () {
+            var data = {
+                from: $("#fromInput").val(),
+                to: $("#toInput").val(),
+                text: $('#btn5').val()
+            };
+            socket.emit('uri', data);
+            return false;
+        });
+
+        $('#btn7').on("click", function () {
+            var data = {
+                from: $("#fromInput").val(),
+                to: $("#toInput").val(),
+                text: $("#btn7").val(),
+            };
+            socket.emit('reset', data);
+            console.log('remotereset' + data.to);
+            return false;
+        });
+
+    });
+
+</script>
+<div id="header">
+    Welcome to HoloVision
+
+</div>
+
+<button style="background-color : white; border:1px solid white;float: right; margin-top: 10px; margin-right: 5px;" type="submit" id="logoutBtn" >
+    <img src=http://14.32.66.127:8083/chatEx2/img/outimg.png></button>
+
+<div style="z-index: 9999" class="login-box">
+    <div class="login-logo">
+        <!--<b>HoloVision</b>&nbsp;&nbsp;Login-->
+    </div><!-- /.login-logo -->
+    <div class="login-box-body loginDiv" style=" margin-top:100px; width: 300px; text-align: center">
+        <!--<p class="login-box-msg">Sign in to start your session</p>-->
+        <h1><b>Holo Vision</b></h1>
+
+            <div class="form-group has-feedback">
+                <input type="text" name="uid" id="uidInput" class="form-control" placeholder="ID">
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" name="upw" id="upwInput" class="form-control" placeholder="Password">
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+
+             <input type="checkbox" id="cb_saveId" style="margin-left: 210px; margin-bottom: 20px"> 자동로그인 <br>
+
+            <div class="row">
+
+                <div class="col-xs-12">
+                    <button type="submit" id="loginBtn" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                </div><!-- /.col -->
+
+            </div>
+
+
+
+    </div><!-- /.login-box-body -->
+</div><!-- /.login-box -->
+
+
+
+<div class="secretDiv">
+    <input type="text" name="text" id="textInput">
+</div>
+
+<div class="wrapper">
+    <div class="row1" style="margin-bottom: 15px;">
+        <button class="btn-push" id="btn1" type=submit value="/clock/clock.html"
+                style="float:left; margin-right: 10px;"><img
+                src=http://14.32.66.127:8083/chatEx2/img/clock1.png></button>
+        <button class="btn-push" id="btn2" type=submit value="/watch/canvasEx2.html" style="float:left"><img
+                src=http://14.32.66.127:8083/chatEx2/img/clock.png></button>
+    </div>
+    <div class="row1" style="margin-bottom: 15px;">
+        <button class="btn-push" id="btn5" type=submit value="/news/sendnews.html"
+                style="float: left; margin-right: 10px;"><img
+                src=http://14.32.66.127:8083/chatEx2/img/news.png></button>
+        <button class="btn-push" id="btn4" type=submit value="/naver/naver.html" style="float:left"><img
+                src=http://14.32.66.127:8083/chatEx2/img/naver.png></button>
+    </div>
+    <div class="row1" style="margin-bottom: 15px;">
+
+        <button class="btn-push" id="btn3" type=submit value="/weather/weather.html" style="float:left"><img
+                src=http://14.32.66.127:8083/chatEx2/img/weather.png></button>
+
+        <button class="btn-push" id="btn6" type=submit value="" style="float:left"><img
+                src=http://14.32.66.127:8083/chatEx2/img/chat.png onclick="window.open('http://localhost:3003/chat'); return false;"></button>
+        <!--<button class="btn-push" id="btn7" type=submit value="reset" style="float:left"><img
+                src=http://14.32.66.127:8083/chatEx2/img/chat.png></button>-->
+    </div>
+
+
+
+</div>
+
+
+</body>
+</html>

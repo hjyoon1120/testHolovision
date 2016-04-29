@@ -1,0 +1,178 @@
+<!--Remote Controller-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Socket.IO chat</title>
+    <style>
+        body {
+
+        }
+
+        button {
+            width: 200px;
+            height: 50px;
+            margin-top: 20px;
+        }
+
+    </style>
+
+    <script src="//js.leapmotion.com/leap-0.6.4.js"></script>
+    <script src="//js.leapmotion.com/leap-plugins-0.1.11.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <style>
+        body {
+            font-size: 1.5em;
+            line-height: 2em;
+        }
+
+        #cursor {
+            width: 60px;
+            height: 60px;
+            position: fixed;
+            margin-left: -50px;
+            margin-top: -50px;
+            z-index: 910;
+            opacity: 0.9;
+
+            background: black;
+            border-radius: 100%;
+            background: -webkit-radial-gradient(50px 50px, circle, #5cabff, #000);
+            background: -moz-radial-gradient(100px 100px, circle, #5cabff, #000);
+            background: radial-gradient(100px 100px, circle, #5cabff, #000);
+        }
+        .buttonWrap{
+            text-align: center;
+            margin-top: 200px;
+        }
+
+        .right{
+            margin-left: 500px;
+        }
+
+        .hover{
+            padding: 1em;
+            margin: auto;
+        }
+        #btn1{
+
+        }
+    </style>
+
+</head>
+<body>
+
+<input class=btn, id=btn1 type=image value = "../clock/clock.html" src="http://192.168.0.32:8081/chatEx2/img/clock1.png" style= "margin-right: 100px;margin-top: 100px;">
+<input class=btn, id=btn2 type=image value="../weather/weather.html" src="http://192.168.0.32:8081/chatEx2/img/weather.png" style= "margin-right: 100px;margin-top: 100px;"><br>
+<input class=btn, id=btn3 type=image value="../naver/naver.html" src="http://192.168.0.32:8081/chatEx2/img/naver.png" style= "margin-right: 100px;margin-top: 100px;">
+<input class=btn, id=btn4 type=image value="../news/sendnews.html" src="http://192.168.0.32:8081/chatEx2/img/news.png" style= "margin-right: 100px;margin-top: 100px;"><br>
+<input class=btn, id=btn5 type=image value = "../watch/canvasEx2.html" src="http://192.168.0.32:8081/chatEx2/img/clock.png" style= "margin-right: 100px;margin-top: 100px;"><br>
+
+
+
+<script src="socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-2.2.0.js"></script>
+
+<script>
+    var socket = io();
+
+    $('#btn1').on("click", function () {
+        socket.emit('uri', $('#btn1').val());
+        return false;
+    });
+    $('#btn2').on("click", function () {
+        socket.emit('uri', $('#btn2').val());
+        return false;
+    });
+
+
+    $('#btn3').on("click", function () {
+        socket.emit('uri', $('#btn3').val());
+        return false;
+    });
+    $('#btn4').on("click", function () {
+        socket.emit('uri', $('#btn4').val());
+        return false;
+    });
+
+    $('#btn5').on("click", function () {
+        socket.emit('uri', $('#btn5').val());
+        return false;
+    });
+
+
+
+
+</script>
+
+<div id="cursor"></div>
+
+<script type="text/javascript">
+
+    var socket = io();
+
+    window.cursor = $('#cursor');
+    window.output = $('#output');
+
+    var clock = "../clock/clock.html";
+
+    Leap.loop({hand: function(hand){
+
+                var screenPosition = hand.screenPosition(hand.palmPosition);
+
+                // hide and show the cursor in order to get second-topmost element.
+                cursor.hide();
+                var el = document.elementFromPoint(
+                        hand.screenPosition()[0],
+                        hand.screenPosition()[1]
+                );
+                cursor.show();
+
+                if (el){
+                }else{
+                    return true;
+                }
+
+
+                /*if (el.id == 'btn1'){
+                    socket.emit('uri', $('#btn1').val());
+                }
+
+
+*/
+                var timeout;
+                switch (el.id){
+                    case 'btn1':
+                        clearTimeout(timeout);
+                        timeout = setTimeout( socket.emit('uri', $('#btn1').val()),3000);
+                        break;
+                    case 'btn2':
+                        clearTimeout(timeout);
+                        timeout = setTimeout( socket.emit('uri', $('#btn2').val()),3000);
+                        break;
+                    case 'btn3':
+                        clearTimeout(timeout);
+                        timeout = setTimeout( socket.emit('uri', $('#btn3').val()),3000);
+                        break;
+                    case 'btn4':
+                        socket.emit('uri', $('#btn4').val());
+                        break;
+                    case 'btn5':
+                        socket.emit('uri', $('#btn5').val());
+                        break;
+                }
+
+                cursor.css({
+                    left: screenPosition[0] + 'px',
+                    top:  screenPosition[1] + 'px'
+                });
+
+            }})
+            .use('screenPosition', {
+                scale: 1
+            });
+</script>
+</body>
+</html>
